@@ -39,7 +39,7 @@ export default class Steps extends Component<{}> {
         let fetchData = await this.fb.fetchActivityDataForDay(activitySegment, day);
 
         return new Promise((resolve) => {
-            if (fetchData[fitBitResponseKeys.stepsResponseKey] !== null && fetchData[fitBitResponseKeys.stepsResponseKey].length > 0)
+            if (fetchData[fitBitResponseKeys.stepsResponseKey] !== null && fetchData[fitBitResponseKeys.stepsResponseKey].length > 0){
                 fetchData[fitBitResponseKeys.stepsResponseKey][0]["value"] === "" ? resolve(0)
                                                                                 : resolve(parseInt(fetchData[fitBitResponseKeys.stepsResponseKey][0]["value"]));
             }
