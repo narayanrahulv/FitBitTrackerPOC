@@ -19,9 +19,6 @@ export default class Floors extends Component<{}>{
 
     private fb = new FitBitService();
 
-    componentDidMount = async () => {
-    }
-
     //get range data
     getActivityForDayRange =  async(activitySegment?: string, startDay?: Date, endDay?: Date): Promise<any> => {
         //retrieve data from fitbit

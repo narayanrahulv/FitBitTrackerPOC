@@ -12,10 +12,14 @@ export const fitBitRequestValues = {
 
 export const fitBitActivitySegments = {
     steps: "/activities/tracker/steps/date/",
-    floors: "/activities/tracker/floors/date/"
+    floors: "/activities/tracker/floors/date/",
+    calories: "/activities/tracker/calories/date/",
+    sleep: "/sleep/date/"
 }
 
 export const fitBitResponseKeys = {
     stepsResponseKey: "activities-tracker-steps",
-    floorsResponseKey: "activities-tracker-floors"
+    floorsResponseKey: "activities-tracker-floors",
+    caloriesResponseKey: "activities-tracker-calories",
+    sleepResponseKey: "sleep"
 }
