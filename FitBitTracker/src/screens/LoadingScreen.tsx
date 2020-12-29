@@ -8,6 +8,8 @@ import { FitBitService } from '../services/fitBitService';
 // Components
 import Steps from '../components/Steps';
 import Floors from '../components/Floors';
+import Calories from '../components/Calories';
+import Sleep from '../components/Sleep';
 
 export default class LoadingScreen extends Component<{ navigation: any }>{
     componentDidMount = async () => {
@@ -18,11 +20,17 @@ export default class LoadingScreen extends Component<{ navigation: any }>{
     render(){
         return(
             <View>
-                <View>
+                <View style={{marginBottom: 50}}>
                     <Steps />
                 </View>
-                <View>
+                <View style={{marginBottom: 50}}>
                     <Floors />
+                </View>
+                <View style={{marginBottom: 50}}>
+                    <Calories />
+                </View>
+                <View>
+                    <Sleep />
                 </View>
             </View>
         )

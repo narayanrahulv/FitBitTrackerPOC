@@ -14,7 +14,7 @@ import { fitBitConnectionValues, fitBitActivitySegments, fitBitResponseKeys } fr
 // Services
 import { FitBitService } from '../services/fitBitService';
 
-export default class Steps extends Component<{}> {
+export default class Calories extends Component<{}> {
     constructor(props) {
         super(props);
     }
@@ -27,7 +27,7 @@ export default class Steps extends Component<{}> {
         let fetchData = await this.fb.fetchActivityForDateRange(activitySegment, startDay, endDay);
 
         return new Promise((resolve) => {
-            resolve(fetchData[fitBitResponseKeys.stepsResponseKey])
+            resolve(fetchData[fitBitResponseKeys.caloriesResponseKey])
         });
     }
 
@@ -36,9 +36,9 @@ export default class Steps extends Component<{}> {
         let fetchData = await this.fb.fetchActivityDataForDay(activitySegment, day);
 
         return new Promise((resolve) => {
-            if (fetchData[fitBitResponseKeys.stepsResponseKey] !== null && fetchData[fitBitResponseKeys.stepsResponseKey].length > 0){
-                fetchData[fitBitResponseKeys.stepsResponseKey][0]["value"] === "" ? resolve(0)
-                                                                                : resolve(parseInt(fetchData[fitBitResponseKeys.stepsResponseKey][0]["value"]));
+            if (fetchData[fitBitResponseKeys.caloriesResponseKey] !== null && fetchData[fitBitResponseKeys.caloriesResponseKey].length > 0){
+                fetchData[fitBitResponseKeys.caloriesResponseKey][0]["value"] === "" ? resolve(0)
+                                                                                : resolve(parseInt(fetchData[fitBitResponseKeys.caloriesResponseKey][0]["value"]));
             }
         });
     }
@@ -47,14 +47,14 @@ export default class Steps extends Component<{}> {
         return(
             <Fragment>
                 <View>
-                    <TouchableOpacity onPress={() => this.getActivityForDayRange(fitBitActivitySegments.steps, new Date("2020-09-01"), new Date("2020-09-30"))}>
-                        <Text>Get steps for range</Text>
+                    <TouchableOpacity onPress={() => this.getActivityForDayRange(fitBitActivitySegments.calories, new Date("2020-09-01"), new Date("2020-09-30"))}>
+                        <Text>Get calories for range</Text>
                     </TouchableOpacity>
                 </View>
 
                 <View>
-                    <TouchableOpacity onPress={() => this.getActivityDataForDay(fitBitActivitySegments.steps, new Date("2020-09-12"))}>
-                        <Text>Get steps for date</Text>
+                    <TouchableOpacity onPress={() => this.getActivityDataForDay(fitBitActivitySegments.calories, new Date("2020-09-12"))}>
+                        <Text>Get calories for date</Text>
                     </TouchableOpacity>
                 </View>
             </Fragment>
