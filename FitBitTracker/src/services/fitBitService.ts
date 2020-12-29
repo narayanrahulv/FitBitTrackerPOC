@@ -9,7 +9,7 @@ import moment from 'moment'
 
 // Constants
 import { fitBitAuthConfig } from '../../config';
-import { fitBitConnectionValues } from '../../StaticConfig';
+import { fitBitConnectionValues, fitBitRequestValues } from '../../StaticConfig';
 
 export class FitBitService {
     private clientId: string;
@@ -50,7 +50,7 @@ export class FitBitService {
     }
 
     //activity functions
-    public async fetchActivityInRange(activityType: string, startDay?: Date, endDay?: Date): Promise<any> {
+    public async fetchActivityDataForDay(activitySegment: string, day?: Date): Promise<any> {
         let fitBitToken = await Keychain.getInternetCredentials('fitBitToken')  
         let fitBitUserId = await Keychain.getInternetCredentials('fitBitUserId')
 
@@ -58,29 +58,77 @@ export class FitBitService {
         let result: any;
 
         try {
-            response = await fetch("https://api.fitbit.com/1.2/user/" + fitBitUserId.password
-                                    + "/activities/tracker/steps/"
-                                    + moment(startDay).format('YYYY-MM-DD') + '/' + moment(endDay).format('YYYY-MM-DD') + '.json',
-                                    {
-                                        method: 'GET',
-                                        headers: {
-                                            Authorization: `Bearer ${fitBitToken.password}`,
-                                        },
-                                    });
+            response = await fetch(fitBitRequestValues.requestPrefix + fitBitUserId.password
+                            + activitySegment
+                            + moment(day).format('YYYY-MM-DD') + '/' + moment(day).format('YYYY-MM-DD') + '.json',
+                            {
+                                method: 'GET',
+                                headers: {
+                                    Authorization: `Bearer ${fitBitToken.password}`,
+                                },
+                            });
 
-            console.log("------");
-            console.log(response);
-        }
-        catch {
+            result = await this.parseResponse(response);
+
+            if (!response.ok) {
+                throw response;
+            }
+
+            return result;
+        } catch {
             //error retrieving activity data, return 0
-            console.log("Error retrieving activity data from fitbit", response);
+            console.log("Error retrieving activity data from fitbit for " + activitySegment, response);
 
             return Promise.reject({ response, result });
         }
     }
 
-    public async getActivityForDayRange(activityType?: string, startDay?: Date, endDay?: Date): Promise<any> {
-        //retrieve data from fitbit
-        let fetchData = await this.fetchActivityInRange(activityType, startDay, endDay);
+    public async fetchActivityForDateRange(activitySegment: string, startDay?: Date, endDay?: Date): Promise<any> {
+        let fitBitToken = await Keychain.getInternetCredentials('fitBitToken')  
+        let fitBitUserId = await Keychain.getInternetCredentials('fitBitUserId')
+
+        let response: Response;
+        let result: any;
+
+        try {
+            response = await fetch(fitBitRequestValues.requestPrefix + fitBitUserId.password
+                            + activitySegment
+                            + moment(startDay).format('YYYY-MM-DD') + '/' + moment(endDay).format('YYYY-MM-DD') + '.json',
+                            {
+                                method: 'GET',
+                                headers: {
+                                    Authorization: `Bearer ${fitBitToken.password}`,
+                                },
+                            });
+
+            result = await this.parseResponse(response);
+
+            if (!response.ok) {
+                throw response;
+            }
+
+            return result;
+        }
+        catch {
+            //error retrieving activity data, return 0
+            console.log("Error retrieving activity data range from fitbit for " + activitySegment, response);
+
+            return Promise.reject({ response, result });
+        }
+    }
+
+    private async parseResponse(response: Response) {
+        const result = await response.text();
+
+        if (result) {
+            try {
+                return JSON.parse(result);
+            }
+            catch {
+                return result;
+            }
+        }
+
+        return result;
     }
 }
