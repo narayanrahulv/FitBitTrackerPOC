@@ -4,7 +4,8 @@ import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 
 // Constants
-import { fitBitActivitySegments, fitBitResponseKeys } from '../../StaticConfig';
+import { fitBitActivitySegments, fitBitResponseKeys, icons } from '../../StaticConfig';
+import { Colors } from '../../Colors';
 
 // Services
 import { FitBitService } from '../services/fitBitService';
@@ -44,7 +45,17 @@ export default class Floors extends Component<{}>{
     render() {
         return(
             <Fragment>
-                <View>
+                <View style={[{ alignItems: 'center', justifyContent:'space-between'}, styles.maincontainer]}>
+                    <View style={{ alignItems: 'center'}}>
+                        <View>
+                            <Image source={icons['stairs']}/>
+                        </View>
+                        <View style={{marginLeft: 10}}>
+                            <Text style={styles.textstyle}>Floors</Text>
+                        </View>
+                    </View>
+                </View>
+                {/* <View>
                     <TouchableOpacity onPress={() => this.getActivityForDayRange(fitBitActivitySegments.floors, 
                                                         new Date("2020-09-01"), 
                                                         new Date("2020-09-30"))}>
@@ -57,8 +68,26 @@ export default class Floors extends Component<{}>{
                                                         new Date("2020-09-12"))}>
                         <Text>Get floors for single date</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
             </Fragment>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    //views
+    maincontainer: {
+        borderRadius: 10,
+        backgroundColor: Colors.gainsboro,
+
+        marginVertical: 5,
+        padding: 20,
+        marginHorizontal: 50,
+    },
+
+    //text
+    textstyle: {
+        color: Colors.darkSlateBlue,
+        fontSize: 30
+    }
+})
