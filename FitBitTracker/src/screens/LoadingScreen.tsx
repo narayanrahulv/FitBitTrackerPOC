@@ -14,7 +14,7 @@ import Sleep from '../components/Sleep';
 // Constants
 import { Colors } from '../../Colors';
 
-export default class LoadingScreen extends Component<{ navigation: any }>{
+export default class LoadingScreen extends Component<{ navigation?: any }>{
     componentDidMount = async () => {
         const fb = new FitBitService();
         await fb.authorizeFitBit();
@@ -22,9 +22,9 @@ export default class LoadingScreen extends Component<{ navigation: any }>{
 
     render(){
         return(
-            <ScrollView style={{backgroundColor: Colors.cadetBlue}}>
+            <ScrollView style={{backgroundColor: Colors.cadetBlue, marginTop: 40}}>
                 <View style={styles.viewbottom}>
-                    <Steps />
+                    <Steps navigation={this.props.navigation} />
                 </View>
                 <View style={styles.viewbottom}>
                     <Floors />

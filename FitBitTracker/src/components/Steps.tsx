@@ -15,7 +15,7 @@ import { Colors } from '../../Colors';
 // Services
 import { FitBitService } from '../services/fitBitService';
 
-export default class Steps extends Component<{}> {
+export default class Steps extends Component<{navigation?: any}> {
     constructor(props) {
         super(props);
     }
@@ -48,14 +48,16 @@ export default class Steps extends Component<{}> {
         return(
             <Fragment>
                 <View style={[{ alignItems: 'center', justifyContent:'space-between'}, styles.maincontainer]}>
-                    <View style={{ alignItems: 'center'}}>
-                        <View>
-                            <Image source={icons['steps']}/>
+                    {/* <TouchableOpacity onPress={() => this.props.navigation.navigate("Steps")}> */}
+                        <View style={{ alignItems: 'center'}}>
+                            <View>
+                                <Image source={icons['steps']}/>
+                            </View>
+                            <View style={{marginLeft: 10}}>
+                                <Text style={styles.textstyle}>Steps</Text>
+                            </View>
                         </View>
-                        <View style={{marginLeft: 10}}>
-                            <Text style={styles.textstyle}>Steps</Text>
-                        </View>
-                    </View>
+                    {/* </TouchableOpacity> */}
                 </View>
                 {/* <View>
                     <TouchableOpacity onPress={() => this.getActivityForDayRange(fitBitActivitySegments.steps, new Date("2020-09-01"), new Date("2020-09-30"))}>
