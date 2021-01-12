@@ -1,7 +1,8 @@
 // React
 import React, { Component, Fragment } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native';
 import * as Keychain from 'react-native-keychain';
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 // External libraries
 import qs from 'qs';
@@ -15,12 +16,44 @@ import { Colors } from '../../Colors';
 // Services
 import { FitBitService } from '../services/fitBitService';
 
-export default class Steps extends Component<{}> {
+export default class Steps extends Component<{navigation?: any}, StateModel> {
     constructor(props) {
         super(props);
+
+        this.state = {
+            startDate: new Date(),
+            endDate: new Date(),
+            dayCountDisplayed: 0,
+            dayRangeData: [],
+            dataObtainedFor: ''
+        }
     }
 
     private fb = new FitBitService();
+    private dayStepsObtained = 0;
+    private dayRangeDataObtained = [];
+
+    componentDidMount = async () => {
+    }
+
+    processClick = async (dataObtainedFor: string) => {
+        if (dataObtainedFor.toLowerCase() === "day"){
+            this.dayStepsObtained = await this.getActivityDataForDay(fitBitActivitySegments.steps, this.state.startDate);
+            //set the count to be displayed
+            this.setState({
+                dayCountDisplayed: this.dayStepsObtained,
+                dayRangeData: [],
+                dataObtainedFor: dataObtainedFor.toLowerCase()
+            });
+        }
+        else {
+            this.dayRangeDataObtained = await this.getActivityForDayRange(fitBitActivitySegments.steps, this.state.startDate, this.state.endDate);
+            this.setState({
+                dayRangeData: this.dayRangeDataObtained,
+                dataObtainedFor: dataObtainedFor.toLowerCase()
+            });
+        }
+    }
 
     //get range data
     getActivityForDayRange = async (activitySegment?: string, startDay?: Date, endDay?: Date): Promise<any> => {
@@ -44,33 +77,101 @@ export default class Steps extends Component<{}> {
         });
     }
 
+    onStartDateChange = (event, val) => {
+        //set the value of startDate 
+        this.setState({
+            startDate: val
+        })
+    }
+
+    onEndDateChange = (event, val) => {
+        //set the value of endDate 
+        this.setState({
+            endDate: val
+        })
+    }
+
     render() {
         return(
             <Fragment>
-                <View style={[{ alignItems: 'center', justifyContent:'space-between'}, styles.maincontainer]}>
-                    <View style={{ alignItems: 'center'}}>
-                        <View>
-                            <Image source={icons['steps']}/>
-                        </View>
-                        <View style={{marginLeft: 10}}>
-                            <Text style={styles.textstyle}>Steps</Text>
-                        </View>
+                <ScrollView style={{backgroundColor: Colors.cadetBlue, marginTop: 40}}>
+                    <View>
+                        <DateTimePicker
+                            testID="dateTimePicker"
+                            value={this.state.startDate}
+                            is24Hour={true}
+                            display="default"
+                            onChange={this.onStartDateChange}
+                            />
                     </View>
-                </View>
-                {/* <View>
-                    <TouchableOpacity onPress={() => this.getActivityForDayRange(fitBitActivitySegments.steps, new Date("2020-09-01"), new Date("2020-09-30"))}>
-                        <Text>Get steps for range</Text>
+                    
+                    <TouchableOpacity onPress={() => this.processClick("day")}>
+                        <View style={styles.buttoncontainer}>
+                            <Text>Get steps for date</Text>
+                        </View>
                     </TouchableOpacity>
-                </View>
+                    
+                    <View>
+                        <DateTimePicker
+                            testID="dateTimePicker"
+                            value={this.state.endDate}
+                            is24Hour={true}
+                            display="default"
+                            onChange={this.onEndDateChange}
+                            />
+                    </View>
 
-                <View>
-                    <TouchableOpacity onPress={() => this.getActivityDataForDay(fitBitActivitySegments.steps, new Date("2020-09-12"))}>
-                        <Text>Get steps for date</Text>
+                    <TouchableOpacity onPress={() => this.processClick("range")}>
+                        <View style={styles.buttoncontainer}>
+                            <Text>Get steps for range</Text>
+                        </View>
                     </TouchableOpacity>
-                </View> */}
+
+                    <ScrollView style={{backgroundColor: Colors.gainsboro, width: "80%", height: "80%", alignSelf: 'center'}}>
+                        {
+                            this.state.dataObtainedFor.toLowerCase() === "day" &&
+                            <View style={{flexDirection: 'row'}}>
+                                <View style={{marginLeft: 20}}>
+                                    <Text>{moment(this.state.startDate).format("YYYY MM DD")}</Text>
+                                </View>
+                                <View style={{marginLeft: 20}}>
+                                    <Text>{this.state.dayCountDisplayed}</Text>
+                                </View>
+                            </View>
+                        }
+                        {
+                            this.state.dayRangeData.map((dr, i) => {
+                                return(
+                                    <View style={{flexDirection: 'row'}}>
+                                        <View style={{marginLeft: 20}}>
+                                            <Text>{dr.dateTime}</Text>
+                                        </View>
+                                        <View style={{marginLeft: 20}}>
+                                            <Text>{dr.value}</Text>
+                                        </View>
+                                    </View>
+                                )
+                            })
+                        }
+                    </ScrollView>
+                    
+                </ScrollView>
             </Fragment>
         )
     }
+}
+
+interface StateModel {
+    startDate: Date;
+    endDate: Date;
+    dayCountDisplayed: number;
+    dayRangeData: Array<RangeModel>
+    dataObtainedFor: string;
+}
+
+interface RangeModel {
+    day: Date;
+    dayCount: number;
 }
 
 const styles = StyleSheet.create({
@@ -78,6 +179,14 @@ const styles = StyleSheet.create({
     maincontainer: {
         borderRadius: 10,
         backgroundColor: Colors.gainsboro,
+
+        marginVertical: 5,
+        padding: 20,
+        marginHorizontal: 50,
+    },
+    buttoncontainer: {
+        borderRadius: 10,
+        backgroundColor: Colors.darkOrange,
 
         marginVertical: 5,
         padding: 20,

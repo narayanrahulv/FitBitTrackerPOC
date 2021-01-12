@@ -194,7 +194,6 @@
 				B3F8702663B2798DD447E63B /* Pods-FitBitTracker-tvOSTests.debug.xcconfig */,
 				B4B5BEDD70579E36A013A046 /* Pods-FitBitTracker-tvOSTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
