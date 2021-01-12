@@ -4,11 +4,11 @@ import { createAppContainer, createSwitchNavigator, } from 'react-navigation';
 
 //Screens
 import LoadingScreen from '../screens/LoadingScreen';
-import StepsScreen from '../screens/StepsScreen';
+import Steps from '../components/Steps';
 
 const MainNavigator = createSwitchNavigator({
     Loading: { screen: LoadingScreen },
-    Steps: { screen: StepsScreen}
+    Steps: {screen: Steps}
 },
 {
     initialRouteName: 'Loading'

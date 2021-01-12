@@ -6,13 +6,19 @@ import { Text, View, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity
 import { FitBitService } from '../services/fitBitService';
 
 // Components
-import Steps from '../components/Steps';
+// import Steps from '../components/Steps';
+import Steps from '../components/Tiles/StepsTile';
 import Floors from '../components/Floors';
 import Calories from '../components/Calories';
 import Sleep from '../components/Sleep';
+import StepsTile from '../components/Tiles/StepsTile';
+import FloorsTile from '../components/Tiles/FloorsTile';
+import CaloriesTile from '../components/Tiles/CaloriesTile';
+import SleepTile from '../components/Tiles/SleepTile';
 
 // Constants
 import { Colors } from '../../Colors';
+
 
 export default class LoadingScreen extends Component<{ navigation?: any }>{
     componentDidMount = async () => {
@@ -24,16 +30,16 @@ export default class LoadingScreen extends Component<{ navigation?: any }>{
         return(
             <ScrollView style={{backgroundColor: Colors.cadetBlue, marginTop: 40}}>
                 <View style={styles.viewbottom}>
-                    <Steps navigation={this.props.navigation} />
+                    <StepsTile navigation={this.props.navigation} />
                 </View>
                 <View style={styles.viewbottom}>
-                    <Floors />
+                    <FloorsTile />
                 </View>
                 <View style={styles.viewbottom}>
-                    <Calories />
+                    <CaloriesTile />
                 </View>
                 <View style={styles.viewbottom}>
-                    <Sleep />
+                    <SleepTile />
                 </View>
             </ScrollView>
         )
