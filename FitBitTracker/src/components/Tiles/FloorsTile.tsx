@@ -20,19 +20,25 @@ export default class FloorsTile extends Component<{navigation?: any}>{
         super(props);
     }
 
+    showDataDisplay = () => {
+        this.props.navigation.navigate("DataDisplay", { displayDataType: "floors"});
+    }
+
     render() {
         return(
             <Fragment>
-                <View style={[{ alignItems: 'center', justifyContent:'space-between'}, styles.maincontainer]}>
-                    <View style={{ alignItems: 'center'}}>
-                        <View>
-                            <Image source={icons['stairs']}/>
-                        </View>
-                        <View style={{marginLeft: 10}}>
-                            <Text style={styles.textstyle}>Floors</Text>
+                <TouchableOpacity onPress={this.showDataDisplay}>
+                    <View style={[{ alignItems: 'center', justifyContent:'space-between'}, styles.maincontainer]}>
+                        <View style={{ alignItems: 'center'}}>
+                            <View>
+                                <Image source={icons['stairs']}/>
+                            </View>
+                            <View style={{marginLeft: 10}}>
+                                <Text style={styles.textstyle}>Floors</Text>
+                            </View>
                         </View>
                     </View>
-                </View>
+                </TouchableOpacity>
             </Fragment>
         )
     }

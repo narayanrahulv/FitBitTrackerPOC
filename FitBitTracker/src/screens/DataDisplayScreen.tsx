@@ -16,7 +16,12 @@ import { Colors } from '../../Colors';
 // Services
 import { FitBitService } from '../services/fitBitService';
 
-export default class Steps extends Component<{navigation?: any}, StateModel> {
+export default class DataDisplayScreen extends Component<
+    { 
+        navigation?: any,
+        displayDataType?: string, 
+    }, StateModel
+    >{
     constructor(props) {
         super(props);
 
@@ -24,55 +29,66 @@ export default class Steps extends Component<{navigation?: any}, StateModel> {
             startDate: new Date(),
             endDate: new Date(),
             dayCountDisplayed: 0,
-            dayRangeData: [],
-            dataObtainedFor: ''
+            dayRangeDisplayed: [],
+            dataObtainedFor: '',
+            dataType: this.props.navigation.state.params.displayDataType
         }
     }
 
     private fb = new FitBitService();
-    private dayStepsObtained = 0;
-    private dayRangeDataObtained = [];
+    private dayCountObtained = 0;
+    private dayRangeObtained = [];
+    private dataActivitySegment = '';
+    private dataActivityResponseKey = '';
 
     componentDidMount = async () => {
+        if (this.state.dataType === "steps"){
+            this.dataActivitySegment = fitBitActivitySegments.steps
+            this.dataActivityResponseKey = fitBitResponseKeys.stepsResponseKey
+        }
+        else if (this.state.dataType === "floors"){
+            this.dataActivitySegment = fitBitActivitySegments.floors
+            this.dataActivityResponseKey = fitBitResponseKeys.floorsResponseKey
+        }
     }
 
     processClick = async (dataObtainedFor: string) => {
         if (dataObtainedFor.toLowerCase() === "day"){
-            this.dayStepsObtained = await this.getActivityDataForDay(fitBitActivitySegments.steps, this.state.startDate);
+            this.dayCountObtained = await this.getActivityDataForDay(this.dataActivitySegment, this.dataActivityResponseKey, this.state.startDate);
             //set the count to be displayed
             this.setState({
-                dayCountDisplayed: this.dayStepsObtained,
-                dayRangeData: [],
+                dayCountDisplayed: this.dayCountObtained,
+                dayRangeDisplayed: [],
                 dataObtainedFor: dataObtainedFor.toLowerCase()
             });
         }
         else {
-            this.dayRangeDataObtained = await this.getActivityForDayRange(fitBitActivitySegments.steps, this.state.startDate, this.state.endDate);
+            this.dayRangeObtained = await this.getActivityForDayRange(this.dataActivitySegment, this.dataActivityResponseKey, this.state.startDate, this.state.endDate);
             this.setState({
-                dayRangeData: this.dayRangeDataObtained,
+                dayRangeDisplayed: this.dayRangeObtained,
                 dataObtainedFor: dataObtainedFor.toLowerCase()
             });
         }
     }
 
     //get range data
-    getActivityForDayRange = async (activitySegment?: string, startDay?: Date, endDay?: Date): Promise<any> => {
+    getActivityForDayRange = async (activitySegment?: string, activityResponseKey?: string, startDay?: Date, endDay?: Date): Promise<any> => {
         //retrieve data from fitbit
         let fetchData = await this.fb.fetchActivityForDateRange(activitySegment, startDay, endDay);
 
         return new Promise((resolve) => {
-            resolve(fetchData[fitBitResponseKeys.stepsResponseKey])
+            resolve(fetchData[activityResponseKey])
         });
     }
 
     //get single day data
-    getActivityDataForDay = async(activitySegment?: string, day?: Date): Promise<number> => {
+    getActivityDataForDay = async(activitySegment?: string, activityResponseKey?: string, day?: Date): Promise<number> => {
         let fetchData = await this.fb.fetchActivityDataForDay(activitySegment, day);
 
         return new Promise((resolve) => {
-            if (fetchData[fitBitResponseKeys.stepsResponseKey] !== null && fetchData[fitBitResponseKeys.stepsResponseKey].length > 0){
-                fetchData[fitBitResponseKeys.stepsResponseKey][0]["value"] === "" ? resolve(0)
-                                                                                : resolve(parseInt(fetchData[fitBitResponseKeys.stepsResponseKey][0]["value"]));
+            if (fetchData[activityResponseKey] !== null && fetchData[activityResponseKey].length > 0){
+                fetchData[activityResponseKey][0]["value"] === "" ? resolve(0)
+                                                                    : resolve(parseInt(fetchData[activityResponseKey][0]["value"]));
             }
         });
     }
@@ -104,13 +120,13 @@ export default class Steps extends Component<{navigation?: any}, StateModel> {
                             onChange={this.onStartDateChange}
                             />
                     </View>
-                    
+
                     <TouchableOpacity onPress={() => this.processClick("day")}>
-                        <View style={styles.buttoncontainer}>
-                            <Text>Get steps for date</Text>
+                        <View style={styles.buttoncontainera}>
+                            <Text>Get count for date</Text>
                         </View>
                     </TouchableOpacity>
-                    
+
                     <View>
                         <DateTimePicker
                             testID="dateTimePicker"
@@ -122,8 +138,8 @@ export default class Steps extends Component<{navigation?: any}, StateModel> {
                     </View>
 
                     <TouchableOpacity onPress={() => this.processClick("range")}>
-                        <View style={styles.buttoncontainer}>
-                            <Text>Get steps for range</Text>
+                        <View style={styles.buttoncontainerb}>
+                            <Text>Get data for range</Text>
                         </View>
                     </TouchableOpacity>
 
@@ -140,7 +156,7 @@ export default class Steps extends Component<{navigation?: any}, StateModel> {
                             </View>
                         }
                         {
-                            this.state.dayRangeData.map((dr, i) => {
+                            this.state.dayRangeDisplayed.map((dr, i) => {
                                 return(
                                     <View style={{flexDirection: 'row'}}>
                                         <View style={{marginLeft: 20}}>
@@ -154,7 +170,6 @@ export default class Steps extends Component<{navigation?: any}, StateModel> {
                             })
                         }
                     </ScrollView>
-                    
                 </ScrollView>
             </Fragment>
         )
@@ -165,8 +180,9 @@ interface StateModel {
     startDate: Date;
     endDate: Date;
     dayCountDisplayed: number;
-    dayRangeData: Array<RangeModel>
+    dayRangeDisplayed: Array<RangeModel>
     dataObtainedFor: string;
+    dataType: string
 }
 
 interface RangeModel {
@@ -184,9 +200,17 @@ const styles = StyleSheet.create({
         padding: 20,
         marginHorizontal: 50,
     },
-    buttoncontainer: {
+    buttoncontainera: {
         borderRadius: 10,
         backgroundColor: Colors.darkOrange,
+
+        marginVertical: 5,
+        padding: 20,
+        marginHorizontal: 50,
+    },
+    buttoncontainerb: {
+        borderRadius: 10,
+        backgroundColor: Colors.lightBlue,
 
         marginVertical: 5,
         padding: 20,

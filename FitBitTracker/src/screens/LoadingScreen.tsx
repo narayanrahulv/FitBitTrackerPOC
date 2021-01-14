@@ -33,7 +33,7 @@ export default class LoadingScreen extends Component<{ navigation?: any }>{
                     <StepsTile navigation={this.props.navigation} />
                 </View>
                 <View style={styles.viewbottom}>
-                    <FloorsTile />
+                    <FloorsTile navigation={this.props.navigation} />
                 </View>
                 <View style={styles.viewbottom}>
                     <CaloriesTile />
