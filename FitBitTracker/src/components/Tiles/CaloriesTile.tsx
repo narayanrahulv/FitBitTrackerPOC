@@ -20,19 +20,25 @@ export default class CaloriesTile extends Component<{navigation?: any}> {
         super(props);
     }
 
+    showDataDisplay = () => {
+        this.props.navigation.navigate("DataDisplay", { displayDataType: "calories"});
+    }
+
     render() {
         return(
             <Fragment>
-                <View style={[{ alignItems: 'center', justifyContent:'space-between'}, styles.maincontainer]}>
-                    <View style={{ alignItems: 'center'}}>
-                        <View>
-                            <Image source={icons['calories']}/>
-                        </View>
-                        <View style={{marginLeft: 10}}>
-                            <Text style={styles.textstyle}>Calories</Text>
+                <TouchableOpacity onPress={this.showDataDisplay}>
+                    <View style={[{ alignItems: 'center', justifyContent:'space-between'}, styles.maincontainer]}>
+                        <View style={{ alignItems: 'center'}}>
+                            <View>
+                                <Image source={icons['calories']}/>
+                            </View>
+                            <View style={{marginLeft: 10}}>
+                                <Text style={styles.textstyle}>Calories</Text>
+                            </View>
                         </View>
                     </View>
-                </View>
+                </TouchableOpacity>
             </Fragment>
         )
     }
