@@ -42,13 +42,22 @@ export default class DataDisplayScreen extends Component<
     private dataActivityResponseKey = '';
 
     componentDidMount = async () => {
-        if (this.state.dataType === "steps"){
-            this.dataActivitySegment = fitBitActivitySegments.steps
-            this.dataActivityResponseKey = fitBitResponseKeys.stepsResponseKey
-        }
-        else if (this.state.dataType === "floors"){
-            this.dataActivitySegment = fitBitActivitySegments.floors
-            this.dataActivityResponseKey = fitBitResponseKeys.floorsResponseKey
+        switch(this.state.dataType.toLowerCase()){
+            case "steps":
+                this.dataActivitySegment = fitBitActivitySegments.steps
+                this.dataActivityResponseKey = fitBitResponseKeys.stepsResponseKey
+                break;
+            case "floors":
+                this.dataActivitySegment = fitBitActivitySegments.floors
+                this.dataActivityResponseKey = fitBitResponseKeys.floorsResponseKey
+                break;
+            case "calories":
+                this.dataActivitySegment = fitBitActivitySegments.calories
+                this.dataActivityResponseKey = fitBitResponseKeys.caloriesResponseKey
+                break;
+            default:
+                this.dataActivitySegment = fitBitActivitySegments.steps
+                this.dataActivityResponseKey = fitBitResponseKeys.stepsResponseKey
         }
     }
 
