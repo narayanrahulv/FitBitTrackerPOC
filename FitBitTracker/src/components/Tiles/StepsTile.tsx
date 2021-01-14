@@ -20,10 +20,14 @@ export default class StepsTile extends Component<{navigation?: any}>{
         super(props);
     }
 
+    showDataDisplay = () => {
+        this.props.navigation.navigate("DataDisplay", { displayDataType: "steps"});
+    }
+
     render() {
         return(
             <Fragment>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate("Steps")}>
+                <TouchableOpacity onPress={this.showDataDisplay}>
                     <View style={[{ alignItems: 'center', justifyContent:'space-between'}, styles.maincontainer]}>
                         <View style={{ alignItems: 'center'}}>
                             <View>
