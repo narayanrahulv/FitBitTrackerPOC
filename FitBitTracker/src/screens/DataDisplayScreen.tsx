@@ -14,7 +14,7 @@ import { fitBitConnectionValues, fitBitActivitySegments, fitBitResponseKeys, ico
 import { Colors } from '../../Colors';
 
 // Services
-import { FitBitService } from '../services/fitBitService';
+import { FitBitService } from '../services/fitBitService'
 
 export default class DataDisplayScreen extends Component<
     { 
@@ -31,7 +31,8 @@ export default class DataDisplayScreen extends Component<
             dayCountDisplayed: 0,
             dayRangeDisplayed: [],
             dataObtainedFor: '',
-            dataType: this.props.navigation.state.params.displayDataType
+            dataType: this.props.navigation.state.params.displayDataType,
+            emptyDataForRange: false
         }
     }
 
@@ -39,7 +40,8 @@ export default class DataDisplayScreen extends Component<
     private dayCountObtained = 0;
     private dayRangeObtained = [];
     private dataActivitySegment = '';
-    private dataActivityResponseKey = '';
+    private dataActivityResponseKey = ''
+    private emptyDataCountForRange = false;
 
     componentDidMount = async () => {
         switch(this.state.dataType.toLowerCase()){
@@ -55,6 +57,10 @@ export default class DataDisplayScreen extends Component<
                 this.dataActivitySegment = fitBitActivitySegments.calories
                 this.dataActivityResponseKey = fitBitResponseKeys.caloriesResponseKey
                 break;
+            case "sleep":
+                this.dataActivitySegment = fitBitActivitySegments.sleep
+                this.dataActivityResponseKey = fitBitResponseKeys.sleepResponseKey
+                break;
             default:
                 this.dataActivitySegment = fitBitActivitySegments.steps
                 this.dataActivityResponseKey = fitBitResponseKeys.stepsResponseKey
@@ -68,14 +74,19 @@ export default class DataDisplayScreen extends Component<
             this.setState({
                 dayCountDisplayed: this.dayCountObtained,
                 dayRangeDisplayed: [],
-                dataObtainedFor: dataObtainedFor.toLowerCase()
+                dataObtainedFor: dataObtainedFor.toLowerCase(),
             });
         }
         else {
             this.dayRangeObtained = await this.getActivityForDayRange(this.dataActivitySegment, this.dataActivityResponseKey, this.state.startDate, this.state.endDate);
+            
+            if (this.dayRangeObtained.length === 0){
+                this.emptyDataCountForRange = true
+            }
             this.setState({
                 dayRangeDisplayed: this.dayRangeObtained,
-                dataObtainedFor: dataObtainedFor.toLowerCase()
+                dataObtainedFor: dataObtainedFor.toLowerCase(),
+                emptyDataForRange: this.emptyDataCountForRange
             });
         }
     }
@@ -96,8 +107,17 @@ export default class DataDisplayScreen extends Component<
 
         return new Promise((resolve) => {
             if (fetchData[activityResponseKey] !== null && fetchData[activityResponseKey].length > 0){
-                fetchData[activityResponseKey][0]["value"] === "" ? resolve(0)
-                                                                    : resolve(parseInt(fetchData[activityResponseKey][0]["value"]));
+                if(activitySegment === fitBitActivitySegments.sleep){
+                    fetchData[fitBitResponseKeys.sleepResponseKey][0]["minutesAsleep"] === "" ? resolve(0)
+                                                                                : resolve(parseInt(fetchData[fitBitResponseKeys.sleepResponseKey][0]["minutesAsleep"]));
+                }
+                else {
+                    fetchData[activityResponseKey][0]["value"] === "" ? resolve(0)
+                                                                       : resolve(parseInt(fetchData[activityResponseKey][0]["value"]));
+                }
+            }
+            else {
+                resolve(0);
             }
         });
     }
@@ -154,6 +174,12 @@ export default class DataDisplayScreen extends Component<
 
                     <ScrollView style={{backgroundColor: Colors.gainsboro, width: "80%", height: "80%", alignSelf: 'center'}}>
                         {
+                            this.state.emptyDataForRange &&
+                            <View style={{flexDirection: 'row'}}>
+                                <Text>No data available for range {moment(this.state.startDate).format("YYYY MM DD")} to {moment(this.state.endDate).format("YYYY MM DD")}</Text>
+                            </View>
+                        }
+                        {
                             this.state.dataObtainedFor.toLowerCase() === "day" &&
                             <View style={{flexDirection: 'row'}}>
                                 <View style={{marginLeft: 20}}>
@@ -167,7 +193,7 @@ export default class DataDisplayScreen extends Component<
                         {
                             this.state.dayRangeDisplayed.map((dr, i) => {
                                 return(
-                                    <View style={{flexDirection: 'row'}}>
+                                    <View style={{flexDirection: 'row'}} key={i}>
                                         <View style={{marginLeft: 20}}>
                                             <Text>{dr.dateTime}</Text>
                                         </View>
@@ -191,7 +217,8 @@ interface StateModel {
     dayCountDisplayed: number;
     dayRangeDisplayed: Array<RangeModel>
     dataObtainedFor: string;
-    dataType: string
+    dataType: string;
+    emptyDataForRange: boolean;
 }
 
 interface RangeModel {
