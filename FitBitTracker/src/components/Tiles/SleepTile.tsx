@@ -20,19 +20,25 @@ export default class SleepTile extends Component<{navigation?: any}> {
         super(props);
     }
 
+    showDataDisplay = () => {
+        this.props.navigation.navigate("DataDisplay", { displayDataType: "sleep"});
+    }
+
     render() {
         return(
             <Fragment>
-                <View style={[{ alignItems: 'center', justifyContent:'space-between'}, styles.maincontainer]}>
-                    <View style={{ alignItems: 'center'}}>
-                        <View>
-                            <Image source={icons['sleep']}/>
-                        </View>
-                        <View style={{marginLeft: 10}}>
-                            <Text style={styles.textstyle}>Sleep</Text>
+                <TouchableOpacity onPress={this.showDataDisplay}>
+                    <View style={[{ alignItems: 'center', justifyContent:'space-between'}, styles.maincontainer]}>
+                        <View style={{ alignItems: 'center'}}>
+                            <View>
+                                <Image source={icons['sleep']}/>
+                            </View>
+                            <View style={{marginLeft: 10}}>
+                                <Text style={styles.textstyle}>Sleep</Text>
+                            </View>
                         </View>
                     </View>
-                </View>
+                </TouchableOpacity>
             </Fragment>
         )
     }
