@@ -67,6 +67,10 @@ export default class DataDisplayScreen extends Component<
         }
     }
 
+    goBack = async() => {
+        this.props.navigation.navigate("Loading");
+    }
+
     processClick = async (dataObtainedFor: string) => {
         if (dataObtainedFor.toLowerCase() === "day"){
             this.dayCountObtained = await this.getActivityDataForDay(this.dataActivitySegment, this.dataActivityResponseKey, this.state.startDate);
@@ -205,6 +209,12 @@ export default class DataDisplayScreen extends Component<
                             })
                         }
                     </ScrollView>
+
+                    <TouchableOpacity onPress={this.goBack}>
+                        <View style={styles.smallbuttoncontainer}>
+                            <Text style={styles.whitetext}>Go to main screen</Text>
+                        </View>
+                    </TouchableOpacity>
                 </ScrollView>
             </Fragment>
         )
@@ -252,10 +262,25 @@ const styles = StyleSheet.create({
         padding: 20,
         marginHorizontal: 50,
     },
+    smallbuttoncontainer: {
+        marginTop: 60,
+        borderRadius: 10,
+        backgroundColor: Colors.darkSlateBlue,
+
+        marginVertical: 5,
+        padding: 20,
+        marginHorizontal: 100,
+
+        alignSelf: 'center'
+    },
 
     //text
     textstyle: {
         color: Colors.darkSlateBlue,
         fontSize: 30
+    },
+    whitetext: {
+        color: Colors.floralWhite,
+        fontSize: 20
     }
 })

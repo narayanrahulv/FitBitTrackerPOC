@@ -3,5 +3,6 @@ export const Colors = {
     gainsboro: '#dcdcdc',
     cadetBlue: '#5f9ea0',
     darkSlateBlue: '#483d8b',
-    darkOrange: '#ff8c00'
+    darkOrange: '#ff8c00',
+    floralWhite: '#fffaf0'
 }

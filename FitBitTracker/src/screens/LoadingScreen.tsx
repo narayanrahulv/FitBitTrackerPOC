@@ -7,10 +7,6 @@ import { FitBitService } from '../services/fitBitService';
 
 // Components
 // import Steps from '../components/Steps';
-import Steps from '../components/Tiles/StepsTile';
-import Floors from '../components/Floors';
-import Calories from '../components/Calories';
-import Sleep from '../components/Sleep';
 import StepsTile from '../components/Tiles/StepsTile';
 import FloorsTile from '../components/Tiles/FloorsTile';
 import CaloriesTile from '../components/Tiles/CaloriesTile';
